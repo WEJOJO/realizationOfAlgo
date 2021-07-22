@@ -1,0 +1,214 @@
+#연결리스트와 노드를 통한 너비우선 탐색 
+
+class Node:
+
+    def __init__(self, item):
+        self.data = item
+        self.prev = None
+        self.next = None
+        ###나동빈 너비우선 탐색을 위한 새로운 값 추가
+        self.left = None
+        self.right = None
+        self.sibling = None
+        self.parent = None
+
+class DoublyLinkedList:
+
+    def __init__(self):
+        self.nodeCount = 0
+        self.head = Node(None)
+        self.tail = Node(None)
+        self.head.prev = None
+        self.head.next = self.tail
+        self.tail.prev = self.head
+        self.tail.next = None
+
+
+    def __repr__(self):
+        if self.nodeCount == 0:
+            return 'LinkedList: empty'
+
+        s = ''
+        curr = self.head
+        while curr.next.next:
+            curr = curr.next
+            s += repr(curr.data)
+            if curr.next.next is not None:
+                s += ' -> '
+        return s
+
+
+    def getLength(self):
+        return self.nodeCount
+
+
+    def traverse(self):
+        result = []
+        curr = self.head
+        while curr.next.next:
+            curr = curr.next
+            result.append(curr.data)
+        return result
+
+
+    def reverse(self):
+        result = []
+        curr = self.tail
+        while curr.prev.prev:
+            curr = curr.prev
+            result.append(curr.data)
+        return result
+
+
+    def getAt(self, pos):
+        if pos < 0 or pos > self.nodeCount:
+            return None
+
+        if pos > self.nodeCount // 2:
+            i = 0
+            curr = self.tail
+            while i < self.nodeCount - pos + 1:
+                curr = curr.prev
+                i += 1
+        else:
+            i = 0
+            curr = self.head
+            while i < pos:
+                curr = curr.next
+                i += 1
+
+        return curr
+
+
+    def insertAfter(self, prev, newNode): #같은 노드를 이어서 연결 할 수 없음
+        next = prev.next
+        newNode.prev = prev
+        newNode.next = next
+        prev.next = newNode
+        next.prev = newNode
+        self.nodeCount += 1
+        return True
+
+
+    def insertAt(self, pos, newNode):
+        if pos < 1 or pos > self.nodeCount + 1:
+            return False
+
+        prev = self.getAt(pos - 1)
+        return self.insertAfter(prev, newNode)
+
+
+    def popAfter(self, prev):
+        curr = prev.next
+        next = curr.next
+        prev.next = next
+        next.prev = prev
+        self.nodeCount -= 1
+        return curr
+
+
+    def popAt(self, pos):
+        if pos < 1 or pos > self.nodeCount:
+            raise IndexError('Index out of range')
+
+        prev = self.getAt(pos - 1)
+        return self.popAfter(prev)
+
+
+    def concat(self, L):
+        self.tail.prev.next = L.head.next
+        L.head.next.prev = self.tail.prev
+        self.tail = L.tail
+
+        self.nodeCount += L.nodeCount
+
+
+class LinkedListQueue:
+
+    def __init__(self):
+        self.data = DoublyLinkedList()
+
+    def size(self):
+        return self.data.getLength()
+
+
+    def isEmpty(self):
+        return self.size()==0
+
+
+    def enqueue(self, item):
+        node = item
+        self.data.insertAfter(self.data.head, node)
+
+
+    def dequeue(self):
+        return self.data.popAt(self.size())
+
+
+    def peek(self):
+        return self.data.getAt(self.size()).data
+############### 여기까지가 연결리스트 큐의 구현####
+#깊이 우선 탐색 BFS의 구현
+#큐로 구현한다 이 큐는 또한 연결리스트로 구현한다
+
+#트리의 관계도 즉 트리는 그냥 node별로 만들어놓자
+#7개의 노드 생성 기대하는 순회 방법은 37 > 28 > 99 > 77 > 1 > 3 > 22
+a=Node(37)
+b=Node(28)
+c=Node(99)
+d=Node(77)
+e=Node(1)
+f=Node(3)
+g=Node(22)
+
+#모든 트리끼리의 연결을 갖추었다
+
+a.left=b
+a.right=c
+
+b.left=d
+b.right=e
+b.parent=a
+b.sibling=c
+
+c.left=f
+c.right=g
+c.parent=a
+c.sibling=b
+
+d.parent=b
+d.sibling=e
+
+e.parent=b
+e.sibling=d
+
+f.parent=c
+f.sibling=g
+
+g.parent=c
+g.sibling=f
+
+def bfs(node): #맨 앞의 노드 하나만 받아서 넓이 우선탐색을 하겠다
+    c=[False]*101 #인덱스 그냥 1부터 해서 첫번째 노드인지 아닌지를 가지고 판단? 아니다. 그냥 값을 넣어서 판단하자 #100이하의 숫자로 그냥 하자
+    q=LinkedListQueue() #담을 그릇 생성
+    c[node.data]=True
+    q.enqueue(node) #받은 노드의 데이터를 집어넣음 글쎄.. 난 숫자만 넣고싶지않은데?
+    while q.isEmpty() is False: #비어 있지 않는 동안
+        n=q.dequeue() #a는 노드이다
+        print(n.data, end=' ')
+        
+        if n.sibling:
+            if c[n.sibling.data] == False:
+                c[n.sibling.data] = True
+                q.enqueue(n.sibling)
+        if n.left:
+            if c[n.left.data] == False:
+                c[n.left.data] = True
+                q.enqueue(n.left)
+        if n.right:
+            if c[n.right.data] == False:
+                c[n.right.data] = True
+                q.enqueue(n.right)
+    
+
+bfs(a)
