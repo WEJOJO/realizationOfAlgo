@@ -1,0 +1,65 @@
+#재귀적으로 구현
+check=[False]*101 #숫자가 100이하라고 생각된다면
+
+class Node:
+    def __init__(self, item):
+        self.data=item
+        self.link=[None]*3 #siblig / left / right
+
+    def inorder(self):
+        if check[self.data]:
+            return
+        check[self.data] = True
+        print(self.data, end=' ')
+
+        if self.link[0]:
+            if check[self.link[0].data]==False:
+                self.link[0].inorder()
+        if self.link[1]:
+            if check[self.link[1].data]==False:
+                self.link[1].inorder()
+        if self.link[2]:
+            if check[self.link[2].data]==False:
+                self.link[2].inorder()
+        return
+
+class tree:
+    def __init__(self,r):
+        self.root=r
+    def inorder(self):
+        if self.root:
+            self.root.inorder()
+        else:
+            return False
+
+
+a=Node(31)
+b=Node(22)
+c=Node(1)
+d=Node(39)
+e=Node(9)
+f=Node(99)
+g=Node(3)
+
+a.link[1]=b
+a.link[2]=c
+
+b.link[0]=c
+b.link[1]=d
+b.link[2]=e
+
+c.link[0]=b
+c.link[1]=f
+c.link[2]=g
+
+d.link[0]=e
+
+e.link[0]=d
+
+f.link[0]=g
+
+g.link[0]=f
+
+T=tree(a) #a를 루트로 가지는 트리
+
+T.inorder()
