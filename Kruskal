@@ -1,0 +1,60 @@
+parent=[0]*8
+
+for i in range(len(parent)):
+    parent[i]=i
+
+#생성된 엣지를 모두 담고있는 엣지배열을 만들었다. C++강의의 벡터배열 v[]과 동일하게 이해하고 실행하기 위함.
+class Edge:
+    listOfedge=[] #클래스 변수 >> 전체를 관리할 수 있다.
+    def __init__(self,a,b,c):
+        self.node=[]
+        self.node.append(a)
+        self.node.append(b)
+        self.distance=c
+        Edge.listOfedge.append(self) #추가될 때 스스로를 추가하라
+
+#여기서 Union-Find는 기존에 구현해놓은 노드의 데이터를 가져오는 방식이 아닌, 그냥 인트를 쓰는 방식으로 우선은 구현해놓았다.
+def getParent(parent,x):
+    if parent[x]==x:
+        return x
+    else:
+       parent[x]=getParent(parent,parent[x])
+    return parent[x]
+
+def unionParent(parent,x,y):
+    x=getParent(parent,x)
+    y=getParent(parent,y)
+    if x<y:
+        parent[y]=x
+    else:
+        parent[x]=y
+
+def FindParent(parent,a,b):
+    a=getParent(parent,a)
+    b=getParent(parent,b)
+    if a==b:
+        return True
+    else:
+        return False
+
+Edge(1,7,12)
+Edge(1,4,28)
+Edge(1,2,67)
+Edge(1,5,17)
+Edge(2,4,24)
+Edge(2,5,62)
+Edge(3,5,20)
+Edge(3,6,37)
+Edge(4,7,13)
+Edge(5,7,73)
+Edge(5,6,45)
+
+#거리 기준으로 정렬
+Edge.listOfedge.sort(key=lambda x:x.distance)
+sum=0
+for i in Edge.listOfedge:
+    if (FindParent(parent,i.node[0],i.node[1]) is False):
+        unionParent(parent,i.node[0],i.node[1]) #써클이 아니면 연결하고
+        sum+=i.distance
+
+print(sum)
