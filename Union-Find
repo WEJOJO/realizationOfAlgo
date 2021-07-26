@@ -21,7 +21,8 @@ def getParent(parent,x): #int x
     if parent[x]==x:
         return x
     else:
-        return getParent(parent,parent[x]) #데이터를 넘기는 방식이네
+        parent[x]=getParent(parent,parent[x])
+    return parent[x] else부분에 그냥 바로 return getParent()의 값을 넣어도 상관없이 반환하지만 강의대로 불려올 때마다 적어도 불린 것의 값은 수정해주도록 바꾼 부분이다.
     
 def union(parent,x,y): #서로 추가함
     x=getParent(parent,x)
@@ -39,17 +40,19 @@ def findParent(parent,x,y):
     else:
         return False
 
-a=Node(31)
-b=Node(1)
-c=Node(22)
-d=Node(3)
-e=Node(39)
-f=Node(9)
-g=Node(99)
+a=Node(1)
+b=Node(2)
+c=Node(3)
+d=Node(4)
+e=Node(5)
+f=Node(6)
+g=Node(7)
+h=Node(8)
 
 union(parent,a.data,b.data)
-union(parent,a.data,g.data)
-union(parent,c.data,e.data)
-union(parent,c.data,b.data)
-
-print(parent)
+union(parent,b.data,c.data)
+union(parent,c.data,d.data)
+union(parent,e.data,f.data)
+union(parent,f.data,g.data)
+union(parent,g.data,h.data)
+union(parent,d.data,g.data)
