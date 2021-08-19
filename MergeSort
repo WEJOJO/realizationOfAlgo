@@ -1,4 +1,46 @@
 ---나동빈 코드 >>> 
+def sortingmerge(stt,mid,end,L):
+    i=stt
+    j=mid+1
+    k=stt
+    while i<=mid and j<=end:
+        if L[i]>=L[j]:
+            sol[k]=L[i]
+            i+=1
+        else:
+            sol[k]=L[j]
+            j+=1
+        k+=1
+    
+    if i>mid:
+        while j<=end:
+            sol[k]=L[j]
+            j+=1
+            k+=1
+    if j>end:
+        while i<=mid:
+            sol[k]=L[i]
+            i+=1
+            k+=1
+    
+    for p in range(stt,end+1):
+        L[p]=sol[p]
+
+def mergeSort(stt,end,L):
+    global sol
+    sol=[0]*len(L)
+    mid=(stt+end)//2
+    #재귀의 종결조건 : 하나 하나씩 나뉘는 경우
+    if stt==end:
+        return
+    
+    mergeSort(stt,mid,L)
+    mergeSort(mid+1,end,L)
+    sortingmerge(stt,mid,end,L)
+
+mergeSort(0,len(num)-1,num)
+
+
 
 
 ---2회차 코드
